@@ -1,0 +1,52 @@
+[
+  {
+    "keyword": "Feature",
+    "name": "test",
+    "line": 2,
+    "id": "test",
+    "tags": [
+      {
+        "name": "@test",
+        "line": 1
+      }
+    ],
+    "uri": "test.feature",
+    "elements": [
+      {
+        "id": "test;test12",
+        "keyword": "Scenario",
+        "line": 4,
+        "name": "test12",
+        "tags": [
+          {
+            "name": "@test",
+            "line": 1
+          }
+        ],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "User hit the application",
+            "result": {
+              "status": "passed",
+              "duration": 1964000000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 6,
+            "name": "User click on Utilities",
+            "result": {
+              "status": "passed",
+              "duration": 885000000
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

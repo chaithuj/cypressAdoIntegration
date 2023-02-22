@@ -1,0 +1,50 @@
+verrsion: 0.2
+env: 
+  parameter-store:
+    test: "/test/"
+phases:
+  install:
+    runtime-versions:
+      nodejs: 16
+  pre_build:
+    commands:
+     - apt-get --allow-releaseinfo-change update -y 
+     - apt-get install -y curl jq rsync
+     - curl -SL https://deb.nodesource.com/setup_16.x | bash -
+     - apt-get -y install nodejs xvfb libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth unzip zip
+     - curl -ss -o- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+     - echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+     - apt-get -y update
+     - apt-get -y install google-chrome-stable
+     - Date=`date "+%Y%m%d%H%M%S"`
+     - FormattedDate = `date +'%a, %b, %d, %Y %r'`
+     - apt-get -y update
+     - apt-get -y install jq
+  pre_build:
+   commands:
+     - npm cache clean --force
+     - npm install
+     - npx cypress install --force
+  build:
+    commands:
+       - npm run test ----env test=#test, TAGS=@Smoke --browser chrome 
+      #  -npm --proxy http://webproxy.int.westgroup.com:80 run test || true
+      # for proxy
+    finally:
+       - npm run report
+       - zip - QA-Test-Report.zip report
+       - aws s3 cp QA-Test-Report.zip s3://a208010-cari-app-shared-app-test-reports-usel/QA-Reports/SENV_NAME/SDATE/
+       - cd report
+       - cd run
+       - failed=`cat results.json | jq.totalFailed'`
+       - passed=`cat results.json | jq.totalPassed'`
+       - summary="Passed - "$passed", Failed - "$failed
+       - echo "$summary"
+# team notification
+      #  - |
+      #   if [ $EXITCODE = 0 ]; then
+      #     curl -H 'Content-Type: application/json' -d ("@type": "MessageCard", "@context":"http://schema.org/extensions", "themeColor": "ff0000", "summary": "QA Test Results", "sections": [["activityTitle": "QA Test Results app app", "activitySubtitle": "Smoke test suite ran successfully in aws pipeline, please find the link to ADO Live Dashboard and Cucumber Reports", "activityImage": "https://financialit.net/sites/default/files/thomson reuters logo.5c7d78 £401f24.jpg","facts": [{"name": "Tool Used", "value": "Cypress"), ("name": "Status", "value": "FAIL"), ("name": "Last Run Date", "value": "SFormattedDate"""), {"name": "Application Name", "value": "*"$SERVICE_NAME""), {"name": "Environment ", "value": "*"SENV_NAME""), {"name": "Summary", "value": ""Ssummary""}],"markdown": true)], "potentialAction": [("@type": "OpenUri", "name": "ADO DashBoard", "targets": [{"os": "default", "uri": "https://dev.azure.com/tr-content-and-research-systems/research-application-services/ testPlans/charts?planId=82659&suiteId=334607")]), ("@type": "OpenUri", "name": "Cucumber Report", "targets": [["os": "default", "uri": "https://s3.console.aws.amazon.com/s3/buckets/a208010-cari-app-shared-app-test-reports-usel?region-us-east-1sprafismON -Reports/"SENV_NAME"/"SDATE"/&showversions=false"}]}]}' https://trten.webhook.office.com/webhookb2/09f4f137-d43c-4ed1-a339-3fe4e868e51d@62ccb864-6ala-4b5d-8ele-397decia 250/InconingWebhook/09d20c44fb084a46b2ca5391e4d6d5b4/70f8b507-42fa-464d-a315-4ac159d07ab4
+      #   else
+      #     curl -H 'Content-Type: application/json' -d '{"@type": "MessageCard", "@context":"http://schema.org/extensions", "themeColor": "00FF00", "summary": "QA Test Results", "sections": [["activityTitle":"CA Test Results app app", "activitySubtitle": "Smoke test suite ran successfully in aws pipeline, please find the link to ADO Live Dashboard and Cucumber Reports", "activityImage":"https://financialit.net/sites/default/files/thomson reuters logo.5c7d78f401£24.jpg", "facts": [{"name": "Tool Used", "value": "Cypress"), ("name": "Status", "value": "PASS"), ("name": "Last Run Date", "value": "formattedDate***), ("name": "Application Name", "value": "*"$SERVICE_NAME""), {"name": "Environment ", "value": "SENV_NAME"), "name": "Summary", "value": "Summary""}],"markdown": true)], "potentialAction": [{"@type": "OpenUri", "name": "anoDashBoard", "targets": [{"os": "default", "uri":"https://dev.azure.com/tr-content-and-research-systems/research-application-services/ testPlans/chartalplanId=82653&muit=1 d=334607")1), ("@type": "OpenUri", "name": "Cucumber Report", "targets": [{"os": "default", "uri":"https://s3.console.aws.amazon.com/3/buckets/a208010-cari-app-shared-app-test-reports-usel?regionus-east-laptafixiga -Reports/SENV_NAME"/SDATE" /&showversions=false"}]}]}') https://trten.webhook.office.com/webhookb2/05f4f137-d43c-4ed1-a339-3fe4e868-51d862ccb864-6ala-4b5d-8ale-397dacia/21/tw ingWebhook/09d20c44fb084a46b2ca5391e4d6d5b4/70f8b507-42fa-464d-a315-4ac159d07ab4
+      #   fi
+      #   - echo "QA tests execution Completed"

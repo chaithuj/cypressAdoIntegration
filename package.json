@@ -1,0 +1,38 @@
+{
+  "name": "cypress",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clearReport": "if exist report rmdir /q /s report",
+    "test": "cypress-tags run --headed --env Tags=@test --browser chrome",
+    "report": "node cucumber-html-report"
+  },
+  "author": "Nuclear Team",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^12.6.0",
+    "cypress-cucumber-preprocessor": "^4.3.1",
+    "cypress-multi-reporters": "^1.6.2",
+    "cypress-plugin-tab": "^1.0.5",
+    "cypress-xpath": "^1.6.2",
+    "pdf-parse": "^1.1.1"
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": true,
+    "cucumberJson": {
+      "generate": true,
+      "outputFolder": "report/Jsonfile",
+      "filePrefix": "",
+      "fileSuffix": ".cucumber"
+    }
+  },
+  "dependencies": {
+    "multiple-cucumber-html-reporter": "^1.21.2",
+    "underscore": "^1.13.4",
+    "apollo-link": "^1.2.14",
+    "apollo-link-ws": "^1.0.20",
+    "cypress-downloadfile": "^1.2.3",
+    "ws": "^8.12.1"
+  }
+}
