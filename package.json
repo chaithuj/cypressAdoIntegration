@@ -8,7 +8,7 @@
     "test": "cypress-tags run --headed --env Tags=@test --browser chrome",
     "report": "node cucumber-html-report"
   },
-  "author": "Nuclear Team",
+  "author": "Team",
   "license": "ISC",
   "devDependencies": {
     "cypress": "^12.6.0",
